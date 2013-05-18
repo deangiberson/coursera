@@ -1,16 +1,22 @@
 Coursera Downloader
 ===================
 
-[Coursera][1] is creating some fantastic, free educational classes (e.g.,
-algorithms, machine learning, natural language processing, SaaS).  This
-script allows one to batch download lecture resources (e.g., videos, ppt,
-etc) for a Coursera class.  Given a class name and account credentials, it
-scrapes the course listing page to get the week and class names, and then
-downloads the related materials into appropriately named files and
-directories.
+[![Build Status](https://travis-ci.org/jplehmann/coursera.png?branch=master)](https://travis-ci.org/jplehmann/coursera)
 
-Why is this helpful?  Before I was using [*wget*][2], but I had the
-following problems:
+[Coursera][1] is arguably the leader in *massive open online courses* (MOOC)
+with a selection of more than 300 classes from 62 different institutions [as of
+February 2013][13]. Generous contributions by educators and institutions are
+making excellent education available to many who could not afford it otherwise.
+There are even non-profits with "feet on the ground" in remote areas of the
+world who are helping spread the wealth (see the feedback below from [Tunapanda][14]).
+
+This script makes it easier to batch download lecture resources (e.g., videos, ppt,
+etc) for Coursera classes.  Given one or more class names and account credentials,
+it obtains week and class names from the *lectures* page, and then downloads
+the related materials into appropriately named files and directories.
+
+Why is this helpful?  A utility like [`wget`][2] can work, but has the
+following limitations:
 
 1. Video names have a number in them, but this does not correspond to the
    actual order.  Manually renaming them is a pain.
@@ -18,10 +24,11 @@ following problems:
 3. Using a wget in a for loop picks up extra videos which are not
    posted/linked, and these are sometimes duplicates.
 
-*DownloadThemAll* can also work, but this provides better names.
+*DownloadThemAll* is another possiblity, but this script provides more features such
+as appropriately named files.
 
-Inspired in part by [youtube-dl][3] by which I've downloaded many other good
-videos such as those from Khan Academy.
+This work was originally inspired in part by [youtube-dl][3] by which
+I've downloaded many other good videos such as those from Khan Academy.
 
 
 Features
@@ -44,18 +51,26 @@ the class of interest.
 
 1\. Install any missing dependencies.
 
-  * [Beautiful Soup 3][4] or [Beautiful Soup 4][5]
-    - Ubuntu/Debian for BS3: `sudo apt-get install python-beautifulsoup`
-    - Ubuntu/Debian for BS4: `sudo apt-get install python-bs4`
-    - Mac OSX: `bs4` may be required instead.
-    - Other: `easy_install BeautifulSoup`
+  * [Beautiful Soup 3][4]
+    - Ubuntu/Debian: `sudo apt-get install python-beautifulsoup`
+    - Mac OSX + MacPorts: `sudo port install py-beautifulsoup`
+    - Other: `easy_install beautifulsoup`
+  * [Beautiful Soup 4][5]: An alternative to Beautiful Soup 3. See also
+    html5lib below.
+    - Ubuntu/Debian: `sudo apt-get install python-bs4`
+    - Mac OSX + MacPorts: `sudo port install py-beautifulsoup4`
+    - Other: `easy_install beautifulsoup4`
   * [Argparse][6]: Only necessary if using Python 2.6.
     - Ubuntu/Debian: `sudo apt-get install python-argparse`
     - Other: `easy_install argparse`
   * [easy_install][7]: Only necessary if not using prepackaged dependencies.
     - Ubuntu/Debian: `sudo apt-get install python-setuptools`
+  * [html5lib][15]: Recommended if using Beautiful Soup 4.
+    - Ubuntu/Debian: `sudo apt-get install python-html5lib`
+    - Mac OSX + MacPorts: `sudo port install py-html5lib`
+    - Other: `easy_install html5lib`
 
-On Mac OSX using MacPort, the following may be used:
+On Mac OSX using MacPorts, the following may be used:
 
     port
     > install py-beautifulsoup
@@ -69,7 +84,7 @@ requirements file using `pip install -r requirements.txt`.
 e.g. http://saas-class.org
 
 3\. Run the script to download the materials by providing your Coursera
-username, password (or a `~/.netrc` file), the class names
+account (e.g., email address), password (or a `~/.netrc` file), the class names
 
     General:                     coursera-dl -u <user> -p <pass> saas
     Multiple classes:            coursera-dl -u <user> -p <pass> saas nlp proglang-2012-001
@@ -77,7 +92,12 @@ username, password (or a `~/.netrc` file), the class names
     Filter by lecture name:      coursera-dl -u <user> -p <pass> -lf "3.1_" saas
     Download only ppt files:     coursera-dl -u <user> -p <pass> -f "ppt" saas
     Use a ~/.netrc file:         coursera-dl -n saas
+    Get the preview classes:     coursera-dl -b saas
     Specify download path:       coursera-dl -n --path=C:\Coursera\Classes\ saas
+    
+    Maintain a list of classes in a dir:
+      Initialize:              mkdir -p CURRENT/{class1,class2,..classN}
+      Update:                  coursera-dl -n --path CURRENT `ls CURRENT`
 
 On \*nix platforms\*, the use of a `~/.netrc` file is a good alternative to
 specifying both your username and password every time on the command
@@ -101,13 +121,13 @@ Troubleshooting
 
 * When reporting bugs against `coursera-dl`, please don't forget to include
   enough information so that you can help us help you:
-  - Is the problem happening with the latest version of the script?
-  - What is the course that you are trying to access:
-  - What is the precise command line that you are using (feel free to hide
-    your username and password with asterisks, but leave all other
-    information untouched).
-  - What are the precise messages that you get? Please, copy and past them.
-    Don't reword the messages.
+    * Is the problem happening with the latest version of the script?
+    * What is the course that you are trying to access:
+    * What is the precise command line that you are using (feel free to hide
+      your username and password with asterisks, but leave all other
+      information untouched).
+    * What are the precise messages that you get? Please, copy and past them.
+      Don't reword the messages.
 
 * Make sure the classname you are using corresponds to the resource name used in
   the URL for that class:
@@ -122,6 +142,50 @@ Troubleshooting
   credentials (username and/or password in the command line or in your
   `.netrc` file).
 
+* For courses that have not started yet, but have had a previous iteration
+  sometimes a preview is available, containing all the classes from the
+  last course. These files can be downloaded by passing the -b parameter.
+
+* If you are using Beautiful Soup 4, make sure you have installed
+  html5lib:
+
+        $ python
+        >>> import html5lib
+        >>> print(html5lib.__version__)
+        0.95-dev
+
+Feedback
+--------
+
+I enjoy getting feedback. Here are a few of the comments I've received:
+
+* "Thanks for the good job! Knowledge will flood the World a little more thanks
+  to your script!"
+  <br>Guillaume V. 11/8/2012
+  
+* "Just wanted to send you props for your Python script to download Coursera
+  courses. I've been using it in Kenya for my non-profit to get online courses
+  to places where internet is really expensive and unreliable. Mostly kids here
+  can't afford high school, and downloading one of these classes by the usual
+  means would cost more than the average family earns in one week. Thanks!"
+  <br>Jay L., [Tunapanda][14] 3/20/2013
+
+  
+* "I am a big fan of Coursera and attend lots of different courses. Time
+  constraints don't allow me to attend all the courses I want at the same time.
+  I came across your script, and I am very happily using it!  Great stuff and
+  thanks for making this available on Github - well done!"
+  <br>William G.  2/18/2013
+  
+* "This script is awesome! I was painstakingly downloading each and every video
+  and ppt by hand -- looked into wget but ran into wildcard issues with HTML,
+  and then.. I came across your script.  Can't tell you how many hours you've
+  just saved me :) If you're ever in Paris / Stockholm, it is absolutely
+  mandatory that I buy you a beer :)"
+  <br>Razvan T. 11/26/2012
+
+* "Thanks a lot! :)"
+  <br>Viktor V. 24/04/2013
 
 Contact
 -------
@@ -141,3 +205,6 @@ first last at geemail dotcom or [@jplehmann][12]
 [10]: https://addons.mozilla.org/en-US/firefox/addon/export-cookies
 [11]: https://github.com/jplehmann/coursera/issues
 [12]: https://twitter.com/jplehmann
+[13]: http://techcrunch.com/2013/02/20/coursera-adds-29-schools-90-courses-and-4-new-languages-to-its-online-learning-platform
+[14]: http://www.tunapanda.org
+[15]: https://github.com/html5lib/html5lib-python

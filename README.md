@@ -1,5 +1,4 @@
-Coursera Downloader
-===================
+# Coursera Downloader
 
 [![Build Status](https://travis-ci.org/jplehmann/coursera.png?branch=master)](https://travis-ci.org/jplehmann/coursera)
 
@@ -24,15 +23,14 @@ following limitations:
 3. Using a wget in a for loop picks up extra videos which are not
    posted/linked, and these are sometimes duplicates.
 
-*DownloadThemAll* is another possiblity, but this script provides more features such
-as appropriately named files.
+*DownloadThemAll* is another possibility, but this script provides more
+features such as appropriately named files.
 
 This work was originally inspired in part by [youtube-dl][3] by which
 I've downloaded many other good videos such as those from Khan Academy.
 
 
-Features
---------
+## Features
 
   * Intentionally detailed names, so that it will display and sort properly
     on most interfaces (e.g., MX Video on Android phone).
@@ -43,63 +41,93 @@ Features
   * Core functionality tested on Linux, Mac and Windows.
 
 
-Directions
-----------
+## Instructions
 
-Requires Python 2.6 (or newer) and a free Coursera account enrolled in
-the class of interest.
+`coursera-dl` requires Python 2 (2.6 or newer) or Python 3 (3.2 or newer)
+and a free Coursera account enrolled in the class of interest.  *Note:* You
+must already have (manually) agreed to the Honor of Code of the particular
+courses that you want to use with `coursera-dl`.
 
-1\. Install any missing dependencies.
+### Install any missing dependencies.
 
-  * [Beautiful Soup 3][4]
-    - Ubuntu/Debian: `sudo apt-get install python-beautifulsoup`
-    - Mac OSX + MacPorts: `sudo port install py-beautifulsoup`
-    - Other: `easy_install beautifulsoup`
-  * [Beautiful Soup 4][5]: An alternative to Beautiful Soup 3. See also
-    html5lib below.
-    - Ubuntu/Debian: `sudo apt-get install python-bs4`
-    - Mac OSX + MacPorts: `sudo port install py-beautifulsoup4`
-    - Other: `easy_install beautifulsoup4`
-  * [Argparse][6]: Only necessary if using Python 2.6.
-    - Ubuntu/Debian: `sudo apt-get install python-argparse`
-    - Other: `easy_install argparse`
-  * [easy_install][7]: Only necessary if not using prepackaged dependencies.
-    - Ubuntu/Debian: `sudo apt-get install python-setuptools`
-  * [html5lib][15]: Recommended if using Beautiful Soup 4.
-    - Ubuntu/Debian: `sudo apt-get install python-html5lib`
-    - Mac OSX + MacPorts: `sudo port install py-html5lib`
-    - Other: `easy_install html5lib`
+We strongly recommend that you consider installing Python packages with
+[`pip`][17], as in it is the current [preferred method][18].  If you are
+using `pip`, you can directly install all the dependencies from the
+requirements file using `pip install -r requirements.txt`.
+
+### Installing dependencies on your own
+
+**Warning:** This method is not recommended unless you know what you are
+doing. Before filing bug reports, please check that the versions of your
+modules are those recommended in the `requirements.txt` file.
+
+You may choose to install the dependencies yourself, but our users had
+issues that not all resources (videos etc.) were downloaded with versions
+of the dependencies different than those listed in the `requirements.txt`
+file.
+
+In any case, you may want to install:
+
+* [Beautiful Soup 4][5]: Required. See also html5lib below.
+  - Ubuntu/Debian: `sudo apt-get install python-bs4`
+  - Mac OSX + MacPorts: `sudo port install py-beautifulsoup4`
+  - Other: `pip beautifulsoup4`
+* [Argparse][6]: Required (but you only need to install with Python 2.6)
+  - Ubuntu/Debian: `sudo apt-get install python-argparse`
+  - Other: `pip argparse`
+* [requests][16]: Required.
+  - Ubuntu/Debian: `sudo apt-get install python-requests`
+  - Mac OSX + MacPorts: `sudo port install py-requests`
+  - Other: `pip requests`
+* [six][19]: Required.
+  - Ubuntu/Debian: `sudo apt-get install python-six`
+  - Mac OSX + MacPorts: `sudo port install py27-six`
+  - Other: `pip six`
+* [html5lib][15]: Not required, but recommended for parsing pages.
+  - Ubuntu/Debian: `sudo apt-get install python-html5lib`
+  - Mac OSX + MacPorts: `sudo port install py-html5lib`
+  - Other: `pip html5lib`
+* [easy_install][7]: Only necessary if not using prepackaged
+  dependencies. Also, `pip` supersedes it.
+  - Ubuntu/Debian: `sudo apt-get install python-setuptools`
+
+Again, make sure that you have the versions mentioned in the file
+`requirements.txt` (later versions may be OK).
 
 On Mac OSX using MacPorts, the following may be used:
 
     port
+    > select --set python python27
     > install py-beautifulsoup
     > install py-argparse
-    > install py24-distribute  # for "py-setuptools", the obsolete name
+    > install py-setuptools
+    > install py-requests
+    > install py27-six
 
-If you are using pip, you can directly install all the dependencies from the
-requirements file using `pip install -r requirements.txt`.
+### Create an account with Coursera
 
-2\. Create a Coursera.org account and enroll in a class.
-e.g. http://saas-class.org
+If you don't already have one, create a [Coursera][1] account and enroll in
+a class. See https://www.coursera.org/courses for the list of classes.
 
-3\. Run the script to download the materials by providing your Coursera
-account (e.g., email address), password (or a `~/.netrc` file), the class names
+### Running the script
 
-    General:                     coursera-dl -u <user> -p <pass> saas
-    Multiple classes:            coursera-dl -u <user> -p <pass> saas nlp proglang-2012-001
-    Filter by section name:      coursera-dl -u <user> -p <pass> -sf "Chapter_Four" saas
-    Filter by lecture name:      coursera-dl -u <user> -p <pass> -lf "3.1_" saas
-    Download only ppt files:     coursera-dl -u <user> -p <pass> -f "ppt" saas
-    Use a ~/.netrc file:         coursera-dl -n saas
-    Get the preview classes:     coursera-dl -b saas
-    Specify download path:       coursera-dl -n --path=C:\Coursera\Classes\ saas
+Run the script to download the materials by providing your Coursera account
+(e.g., email address), password (or a `~/.netrc` file), the class names
+
+    General:                     coursera-dl -u <user> -p <pass> modelthinking-004
+    Multiple classes:            coursera-dl -u <user> -p <pass> saas historyofrock1-001 algo-2012-002
+    Filter by section name:      coursera-dl -u <user> -p <pass> -sf "Chapter_Four" crypto-004
+    Filter by lecture name:      coursera-dl -u <user> -p <pass> -lf "3.1_" ml-2012-002
+    Download only ppt files:     coursera-dl -u <user> -p <pass> -f "ppt" qcomp-2012-001
+    Use a ~/.netrc file:         coursera-dl -n -- matrix-001
+    Get the preview classes:     coursera-dl -n -b ni-001
+    Specify download path:       coursera-dl -n --path=C:\Coursera\Classes\ comnetworks-002
     
     Maintain a list of classes in a dir:
       Initialize:              mkdir -p CURRENT/{class1,class2,..classN}
       Update:                  coursera-dl -n --path CURRENT `ls CURRENT`
 
-On \*nix platforms\*, the use of a `~/.netrc` file is a good alternative to
+On \*nix platforms, the use of a `~/.netrc` file is a good alternative to
 specifying both your username and password every time on the command
 line. To use it, simply add a line like the one below to a file named
 `.netrc` in your home directory (or the [equivalent][8], if you are using
@@ -113,30 +141,43 @@ instead.  This is especially convenient, as typing usernames and passwords
 directly on the command line can get tiresome (even more if you happened to
 choose a "strong" password).
 
-\* if this works on Windows, please add additional instructions for it if
-any are needed.
+## Troubleshooting
 
-Troubleshooting
----------------
+It is important that:
 
 * When reporting bugs against `coursera-dl`, please don't forget to include
   enough information so that you can help us help you:
     * Is the problem happening with the latest version of the script?
-    * What is the course that you are trying to access:
+    * What operating system are you using?
+    * Do you have all the recommended versions of the modules? See them in
+      the file `requirements.txt`.
+    * What is the course that you are trying to access?
     * What is the precise command line that you are using (feel free to hide
       your username and password with asterisks, but leave all other
       information untouched).
-    * What are the precise messages that you get? Please, copy and past them.
+    * What are the precise messages that you get? Please, copy and paste them.
       Don't reword the messages.
 
-* Make sure the classname you are using corresponds to the resource name used in
-  the URL for that class:
+* Make sure the class name you are using corresponds to the resource name
+  used in the URL for that class:
     `https://class.coursera.org/<CLASS_NAME>/class/index`
 
-* Previously one could export a Netscape-style cookies file with a browser
-  extension ([1][9], [2][10]) for use with the `-c` option, but this
-  approach does not appear to work with recent classes. Use the `-u` and
-  `-p` flags instead or use the `-n` flag.
+* Note that many courses (most, perhaps?) may remove the materials after a
+  little while after the course is completed, while other courses may retain
+  the materials up to a next session/offering of the same course (to avoid
+  problems with academic dishonesty, apparently).
+
+  In short, it is not guaranteed that you will be able to download after the
+  course is finished and this is, unfortunately, nothing that we can help
+  you with.
+
+* Make sure you have installed and/or updated all of your dependencies
+  according to the `requirements.txt` file as described above.
+ 
+* One can export a Netscape-style cookies file with a browser extension
+  ([1][9], [2][10]) and use it with the `-c` option. This comes in handy
+  when the authentication via password is not working (the authentication
+  process changes now and then).
 
 * If results show 0 sections, you most likely have provided invalid
   credentials (username and/or password in the command line or in your
@@ -152,10 +193,31 @@ Troubleshooting
         $ python
         >>> import html5lib
         >>> print(html5lib.__version__)
-        0.95-dev
+        1.0b2
 
-Feedback
---------
+* If you get an error like `Could not find class: <CLASS_NAME>`:
+    * Verify that the name of the course is correct. Current class
+      names in coursera are composed by a short course name e.g. `class`
+      and the current version of the course (a number). For example, for a
+      class named `class`, you would have to use `class-001`, `class-002`
+      etc.
+    * Second, verify that you are enrolled in the course. You won't be
+      able to access the course materials if you are not officially
+      enrolled and agreed to the honor course *via the website*.
+
+* If:
+  - You get an error when using `-n` to specify that you want to use a
+    `.netrc` file and,
+  - You want the script to use your default netrc file and,
+  - You get a message saying `coursera-dl: error: too few arguments`
+
+  Then you should specify `--` as an argument after `-n`, that is, `-n --`
+  or change the order in which you pass the arguments to the script, so that
+  the argument after `-n` begins with an hyphen (`-`).  Otherwise, Python's
+  `argparse` module will think that what you are passing is the name of the
+  netrc file that you want to use. See issue #162.
+
+## Feedback
 
 I enjoy getting feedback. Here are a few of the comments I've received:
 
@@ -170,7 +232,6 @@ I enjoy getting feedback. Here are a few of the comments I've received:
   means would cost more than the average family earns in one week. Thanks!"
   <br>Jay L., [Tunapanda][14] 3/20/2013
 
-  
 * "I am a big fan of Coursera and attend lots of different courses. Time
   constraints don't allow me to attend all the courses I want at the same time.
   I came across your script, and I am very happily using it!  Great stuff and
@@ -187,8 +248,7 @@ I enjoy getting feedback. Here are a few of the comments I've received:
 * "Thanks a lot! :)"
   <br>Viktor V. 24/04/2013
 
-Contact
--------
+## Contact
 
 Post bugs and issues on [github][11]. Send other comments to John Lehmann:
 first last at geemail dotcom or [@jplehmann][12]
@@ -196,7 +256,6 @@ first last at geemail dotcom or [@jplehmann][12]
 [1]: https://www.coursera.org
 [2]: http://sourceforge.net/projects/gnuwin32/files/wget/1.11.4-1/wget-1.11.4-1-setup.exe
 [3]: https://rg3.github.com/youtube-dl
-[4]: http://www.crummy.com/software/BeautifulSoup/bs3
 [5]: http://www.crummy.com/software/BeautifulSoup
 [6]: http://pypi.python.org/pypi/argparse
 [7]: http://pypi.python.org/pypi/setuptools
@@ -208,3 +267,7 @@ first last at geemail dotcom or [@jplehmann][12]
 [13]: http://techcrunch.com/2013/02/20/coursera-adds-29-schools-90-courses-and-4-new-languages-to-its-online-learning-platform
 [14]: http://www.tunapanda.org
 [15]: https://github.com/html5lib/html5lib-python
+[16]: http://docs.python-requests.org/en/latest/
+[17]: http://www.pip-installer.org/en/latest/
+[18]: http://python-distribute.org/pip_distribute.png
+[19]: https://pypi.python.org/pypi/six/
